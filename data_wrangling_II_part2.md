@@ -239,3 +239,32 @@ weather_df %>%
 ```
 
 ![](data_wrangling_II_part2_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+Reorder by tmax
+
+``` r
+weather_df %>%
+  mutate(name = fct_reorder(name, tmax)) %>% 
+  ggplot(aes(x = name, y = tmax)) + 
+  geom_violin(aes(fill = name), color = "blue", alpha = .5) + 
+  theme(legend.position = "bottom")
+```
+
+![](data_wrangling_II_part2_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+
+## airbnb data
+
+``` r
+data("nyc_airbnb")
+
+nyc_airbnb %>%
+  filter(neighbourhood_group == "Manhattan") %>% 
+  mutate(
+    neighbourhood = fct_reorder(neighbourhood, price, na.rm = TRUE)) %>% 
+  ggplot(aes(x = neighbourhood, y = price)) +
+  geom_boxplot() +
+  coord_flip() + 
+  ylim(0, 1000)
+```
+
+![](data_wrangling_II_part2_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
