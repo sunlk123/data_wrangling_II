@@ -94,3 +94,38 @@ reviews = tibble(
 )
 ```
 
+get data for nyc water consumption 
+GET is a core API call
+
+```{r}
+nyc_water_df = 
+  GET("https://data.cityofnewyork.us/resource/ia2d-e54m.csv") %>%
+  content("parsed")
+```
+
+```{r}
+nyc_water_df = 
+  GET("https://data.cityofnewyork.us/resource/ia2d-e54m.json") %>%
+  content("text") %>%
+  jsonlite::fromJSON() %>%
+  as_tibble()
+```
+
+working with BRFSS data
+
+```{r}
+brfss_smart2010 = 
+  GET("	https://data.cdc.gov/api/views/waxm-p5qv/rows.csv?accessType=DOWNLOAD") %>% 
+  content("parsed")
+```
+
+pokemon data
+
+```{r}
+poke = 
+  GET("http://pokeapi.co/api/v2/pokemon/1") %>%
+  content()
+
+poke$name
+```
+
