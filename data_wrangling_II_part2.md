@@ -139,3 +139,103 @@ pulse_data =
     visit = fct_relevel(visit, str_c(c("00", "01", "06", "12"), "m"))) %>%
   arrange(id, visit)
 ```
+
+``` r
+nsduh_url = "http://samhda.s3-us-gov-west-1.amazonaws.com/s3fs-public/field-uploads/2k15StateFiles/NSDUHsaeShortTermCHG2015.htm"
+
+table_marj = 
+  read_html(nsduh_url) %>% 
+  html_nodes(css = "table") %>% 
+  .[[1]] %>%
+  html_table() %>%
+  slice(-1) %>%
+  as_tibble()
+```
+
+``` r
+table_marj %>%
+  select(-contains("P Value")) %>%
+  pivot_longer(
+    -State,
+    names_to = "age_year",
+    values_to = "percent"
+  ) %>%
+  separate(age_year, into = c("age", "year"), sep = "\\(") %>% 
+  mutate(
+    year = str_replace(year, "\\)", ""),
+    percent = str_replace(percent, "[a-c]$", ""),
+    percent = as.numeric(percent)
+  )
+```
+
+    ## # A tibble: 560 x 4
+    ##    State      age   year      percent
+    ##    <chr>      <chr> <chr>       <dbl>
+    ##  1 Total U.S. 12+   2013-2014   12.9 
+    ##  2 Total U.S. 12+   2014-2015   13.4 
+    ##  3 Total U.S. 12-17 2013-2014   13.3 
+    ##  4 Total U.S. 12-17 2014-2015   12.9 
+    ##  5 Total U.S. 18-25 2013-2014   31.8 
+    ##  6 Total U.S. 18-25 2014-2015   32.1 
+    ##  7 Total U.S. 26+   2013-2014    9.63
+    ##  8 Total U.S. 26+   2014-2015   10.2 
+    ##  9 Total U.S. 18+   2013-2014   12.9 
+    ## 10 Total U.S. 18+   2014-2015   13.4 
+    ## # … with 550 more rows
+
+## factors
+
+``` r
+weather_df = 
+  rnoaa::meteo_pull_monitors(
+    c("USW00094728", "USC00519397", "USS0023B17S"),
+    var = c("PRCP", "TMIN", "TMAX"), 
+    date_min = "2017-01-01",
+    date_max = "2017-12-31") %>%
+  mutate(
+    name = recode(id, USW00094728 = "CentralPark_NY", 
+                      USC00519397 = "Waikiki_HA",
+                      USS0023B17S = "Waterhole_WA"),
+    tmin = tmin / 10,
+    tmax = tmax / 10) %>%
+  select(name, id, everything())
+```
+
+    ## Registered S3 method overwritten by 'crul':
+    ##   method                 from
+    ##   as.character.form_file httr
+
+    ## Registered S3 method overwritten by 'hoardr':
+    ##   method           from
+    ##   print.cache_info httr
+
+    ## file path:          /Users/lorrainekwok/Library/Caches/rnoaa/ghcnd/USW00094728.dly
+
+    ## file last updated:  2019-09-26 10:25:38
+
+    ## file min/max dates: 1869-01-01 / 2019-09-30
+
+    ## file path:          /Users/lorrainekwok/Library/Caches/rnoaa/ghcnd/USC00519397.dly
+
+    ## file last updated:  2019-09-26 10:25:54
+
+    ## file min/max dates: 1965-01-01 / 2019-09-30
+
+    ## file path:          /Users/lorrainekwok/Library/Caches/rnoaa/ghcnd/USS0023B17S.dly
+
+    ## file last updated:  2019-09-26 10:26:01
+
+    ## file min/max dates: 1999-09-01 / 2019-09-30
+
+fct\_relevel: takes numeric value in the background and releveling it
+relevel can only specify the first level
+
+``` r
+weather_df %>%
+  mutate(name = fct_relevel(name, c("Waikiki_HA", "CentralPark_NY", "Waterhole_WA"))) %>% 
+  ggplot(aes(x = name, y = tmax)) + 
+  geom_violin(aes(fill = name), color = "blue", alpha = .5) + 
+  theme(legend.position = "bottom")
+```
+
+![](data_wrangling_II_part2_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
