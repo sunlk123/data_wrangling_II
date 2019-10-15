@@ -201,3 +201,17 @@ nyc_airbnb %>%
   ylim(0, 1000)
 ```
 
+what about factors and linear models?
+
+Use name variable as categorical predictor
+```{r}
+weather_df %>%
+  lm(tmax ~ name, data = .)
+```
+
+```{r}
+weather_df %>%
+  mutate(name = forcats::fct_relevel(name, c("Waikiki_HA", "CentralPark_NY", "Waterhole_WA"))) %>% 
+  lm(tmax ~ name, data = .)
+```
+

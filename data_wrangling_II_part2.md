@@ -268,3 +268,34 @@ nyc_airbnb %>%
 ```
 
 ![](data_wrangling_II_part2_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+what about factors and linear models?
+
+Use name variable as categorical predictor
+
+``` r
+weather_df %>%
+  lm(tmax ~ name, data = .)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = tmax ~ name, data = .)
+    ## 
+    ## Coefficients:
+    ##      (Intercept)    nameWaikiki_HA  nameWaterhole_WA  
+    ##           17.366            12.291            -9.884
+
+``` r
+weather_df %>%
+  mutate(name = forcats::fct_relevel(name, c("Waikiki_HA", "CentralPark_NY", "Waterhole_WA"))) %>% 
+  lm(tmax ~ name, data = .)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = tmax ~ name, data = .)
+    ## 
+    ## Coefficients:
+    ##        (Intercept)  nameCentralPark_NY    nameWaterhole_WA  
+    ##              29.66              -12.29              -22.18
