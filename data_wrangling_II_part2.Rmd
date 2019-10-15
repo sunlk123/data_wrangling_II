@@ -1,0 +1,18 @@
+---
+title: "strings and factors"
+author: "Lorraine Kwok"
+date: "October 15, 2019" 
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  echo = TRUE,
+  warning = FALSE)
+
+library(tidyverse)
+library(rvest)
+library(p8105.datasets)
+```
+
+## String manipulation 
