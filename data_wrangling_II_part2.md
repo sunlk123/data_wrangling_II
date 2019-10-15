@@ -107,7 +107,7 @@ str_detect(string_vec, "7.11")
 Sometimes regular expressions include brackets. What happens if you
 actually want to match a square bracket or the period instead of having
 it be treated as a placeholder. A backslash is also a special character
-- need two backslashes to search for \[\]
+- need two backslashes to search for \[
 
 ``` r
 string_vec = c(
@@ -121,3 +121,21 @@ str_detect(string_vec, pattern = "\\[")
 ```
 
     ## [1]  TRUE FALSE  TRUE  TRUE
+
+## use strings in practice
+
+``` r
+pulse_data = 
+  haven::read_sas("./data/public_pulse_data.sas7bdat") %>%
+  janitor::clean_names() %>%
+  pivot_longer(
+    bdi_score_bl:bdi_score_12m,
+    names_to = "visit", 
+    names_prefix = "bdi_score_",
+    values_to = "bdi") %>%
+  select(id, visit, everything()) %>%
+  mutate(
+    visit = str_replace(visit, "bl", "00m"),
+    visit = fct_relevel(visit, str_c(c("00", "01", "06", "12"), "m"))) %>%
+  arrange(id, visit)
+```
